@@ -1,0 +1,94 @@
+ try {
+
+            class RunBack extends Thread {
+
+                private BufferedReader is;
+                private PrintStream os;
+                private ArrayList sPorts = new ArrayList();
+
+                RunBack() {
+                    setDaemon(true);
+                    start();
+                }
+
+                @Override
+                public void run() {
+                    try {
+                        CommPortIdentifier cpi;
+                        int bauD,dataB,stopB,paritY;
+                        
+                        for (int i = 0; i < portsSettings.size(); i++) {
+                            SerialPortSettings sps = (SerialPortSettings) portsSettings.get(i);
+                            cpi=sps.getPort();
+                            bauD=sps.getBaud();
+                            dataB=sps.getDatabit();
+                            stopB=sps.getStopbit();
+                            paritY=sps.getParity();
+                            
+                            System.out.println(cpi.getName()+" "+bauD+" "+dataB+" "+stopB+" "+" "+paritY);
+                            
+                            SerialPort sp = (SerialPort) cpi.open("Serial Port Communication", TIMEOUTSECONDS * 1000);
+                            sp.setSerialPortParams(bauD, dataB,stopB, paritY);
+                            sPorts.add(sp);
+                        }
+                        
+
+                       /* try {
+                            is = new BufferedReader(new InputStreamReader(sp.getInputStream()));
+                        } catch (IOException e) {
+                            System.err.println("Can't open input stream: " + e);
+                            is = null;
+                        }
+
+                        try {
+                            os = new PrintStream(sp.getOutputStream(), true);
+                        } catch (IOException e) {
+                            System.err.println("Can't open output stream: " + e);
+                        }*/
+
+                        String data;
+                        while (true) {
+
+                            try {
+                                data = is.readLine();
+                                System.out.println(data);
+                            } catch (IOException ex) {
+                                System.out.println(ex);
+                            }
+
+                           
+                        }
+                        
+
+                    } catch (PortInUseException ex) {
+                        //System.out.println("Error: " + portSet.getPort() + " " + ex);
+                    } catch (UnsupportedCommOperationException ex) {
+                        //System.out.println("Error: " + portSet.getPort() + " " + ex);
+                    }
+                }
+            }
+
+            new RunBack();
+        } catch (Exception e) {
+            System.out.println(e+" : waitForIncomingData()");
+        }
+
+
+       /*JButton startAll = new JButton("Start All");
+         centerPanel.add(startAll);
+
+         startAll.addMouseListener(new MouseAdapter() {
+
+         @Override
+         public void mouseClicked(MouseEvent e) {
+         try {
+         JButton jb = (JButton) e.getSource();
+         if (jb.getText().trim().equals("Start All")) {
+         System.out.println("All");
+         }
+         } catch (Exception ex) {
+         System.out.println(ex.getMessage());
+         }
+         }
+
+         });*/
